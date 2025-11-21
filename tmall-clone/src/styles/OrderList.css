@@ -1,0 +1,327 @@
+.order-list-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.loading, .error-message {
+  text-align: center;
+  padding: 40px 20px;
+  font-size: 16px;
+  color: #666;
+}
+
+.retry-button {
+  background-color: #ff6000;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  cursor: pointer;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.retry-button:hover {
+  background-color: #e55100;
+}
+
+.order-header {
+  margin-bottom: 20px;
+}
+
+.order-header h1 {
+  margin: 0;
+  font-size: 24px;
+  color: #333;
+}
+
+.order-tabs {
+  display: flex;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 20px;
+}
+
+.tab {
+  padding: 15px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  color: #666;
+  border-bottom: 2px solid transparent;
+  transition: all 0.3s;
+}
+
+.tab:hover {
+  color: #ff6000;
+}
+
+.tab.active {
+  color: #ff6000;
+  font-weight: bold;
+  border-bottom-color: #ff6000;
+}
+
+.empty-orders {
+  text-align: center;
+  padding: 60px 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.empty-icon {
+  font-size: 48px;
+  margin-bottom: 20px;
+}
+
+.empty-orders p {
+  color: #999;
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.shop-button {
+  background-color: #ff6000;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.shop-button:hover {
+  background-color: #e55100;
+}
+
+.orders-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.order-card {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.order-header-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: #f8f8f8;
+  border-bottom: 1px solid #eee;
+}
+
+.order-number {
+  font-size: 14px;
+  color: #666;
+}
+
+.order-status {
+  font-size: 14px;
+  font-weight: bold;
+  color: #ff6000;
+}
+
+.order-items {
+  padding: 15px 20px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.order-item {
+  display: flex;
+  align-items: center;
+  padding: 15px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.order-item:last-child {
+  border-bottom: none;
+}
+
+.item-image {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-right: 15px;
+}
+
+.item-info {
+  flex-grow: 1;
+}
+
+.item-name {
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 5px;
+  line-height: 1.4;
+}
+
+.item-message {
+  font-size: 12px;
+  color: #999;
+  margin-top: 5px;
+}
+
+.item-price-info {
+  text-align: right;
+}
+
+.item-price {
+  font-size: 16px;
+  color: #ff6000;
+  font-weight: bold;
+}
+
+.item-quantity {
+  font-size: 14px;
+  color: #999;
+  margin-top: 5px;
+}
+
+.order-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 15px 20px;
+  background-color: #f8f8f8;
+}
+
+.order-address {
+  flex: 1;
+}
+
+.address-info {
+  margin-bottom: 5px;
+}
+
+.receiver, .phone {
+  font-size: 14px;
+  color: #333;
+  margin-right: 10px;
+}
+
+.address-detail {
+  font-size: 12px;
+  color: #666;
+}
+
+.order-summary {
+  text-align: right;
+}
+
+.total-amount {
+  font-size: 16px;
+  color: #333;
+}
+
+.total-amount .price {
+  font-weight: bold;
+  color: #ff6000;
+  font-size: 18px;
+}
+
+.order-date {
+  font-size: 12px;
+  color: #999;
+  margin-top: 5px;
+}
+
+.order-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 15px 20px;
+  gap: 10px;
+}
+
+.detail-button, .cancel-button, .pay-button, .remind-button, .confirm-button, .review-button {
+  border: none;
+  border-radius: 4px;
+  padding: 8px 15px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.detail-button {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.detail-button:hover {
+  background-color: #e0e0e0;
+}
+
+.cancel-button {
+  background-color: #f0f0f0;
+  color: #666;
+}
+
+.cancel-button:hover {
+  background-color: #e0e0e0;
+}
+
+.pay-button, .confirm-button {
+  background-color: #ff6000;
+  color: white;
+}
+
+.pay-button:hover, .confirm-button:hover {
+  background-color: #e55100;
+}
+
+.remind-button {
+  background-color: #1677ff;
+  color: white;
+}
+
+.remind-button:hover {
+  background-color: #0958d9;
+}
+
+.review-button {
+  background-color: #52c41a;
+  color: white;
+}
+
+.review-button:hover {
+  background-color: #389e0d;
+}
+
+@media (max-width: 768px) {
+  .order-list-container {
+    padding: 10px;
+  }
+  
+  .order-tabs {
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  
+  .tab {
+    padding: 12px 15px;
+    font-size: 14px;
+  }
+  
+  .order-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .order-summary {
+    text-align: left;
+  }
+  
+  .order-actions {
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-bottom: 5px;
+  }
+}

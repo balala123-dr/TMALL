@@ -1,0 +1,138 @@
+{
+  "name": "tmall-mcp",
+  "version": "1.0.0",
+  "description": "天猫克隆项目的MCP协议集成",
+  "server": {
+    "name": "tmall-mcp-server",
+    "version": "1.0.0",
+    "command": "node",
+    "args": ["mcp-server.js"],
+    "env": {
+      "NODE_ENV": "production"
+    }
+  },
+  "tools": [
+    {
+      "name": "get_user_info",
+      "description": "获取用户信息",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "description": "用户ID"
+          }
+        },
+        "required": ["user_id"]
+      }
+    },
+    {
+      "name": "update_user_profile",
+      "description": "更新用户资料",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "description": "用户ID"
+          },
+          "user_nickname": {
+            "type": "string",
+            "description": "用户昵称"
+          },
+          "user_realname": {
+            "type": "string",
+            "description": "真实姓名"
+          },
+          "user_gender": {
+            "type": "number",
+            "description": "性别 (1: 男, 0: 女)"
+          },
+          "user_address": {
+            "type": "string",
+            "description": "用户地址"
+          }
+        },
+        "required": ["user_id"]
+      }
+    },
+    {
+      "name": "get_addresses",
+      "description": "获取地址列表，支持分级查询",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "parent_id": {
+            "type": "string",
+            "description": "父级地址ID，为空则获取省级地址"
+          }
+        },
+        "required": []
+      }
+    },
+    {
+      "name": "search_products",
+      "description": "搜索商品",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "keyword": {
+            "type": "string",
+            "description": "搜索关键词"
+          },
+          "category": {
+            "type": "string",
+            "description": "商品分类"
+          },
+          "min_price": {
+            "type": "number",
+            "description": "最低价格"
+          },
+          "max_price": {
+            "type": "number",
+            "description": "最高价格"
+          }
+        },
+        "required": []
+      }
+    },
+    {
+      "name": "create_order",
+      "description": "创建订单",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "description": "用户ID"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "product_id": { "type": "string" },
+                "quantity": { "type": "number" },
+                "price": { "type": "number" }
+              }
+            },
+            "description": "订单商品列表"
+          },
+          "delivery_address": {
+            "type": "string",
+            "description": "配送地址"
+          }
+        },
+        "required": ["user_id", "items"]
+      }
+    }
+  ],
+  "resources": [
+    {
+      "uri": "http://localhost:3001/api",
+      "name": "TMALL API",
+      "description": "天猫克隆项目的RESTful API接口",
+      "mimeType": "application/json"
+    }
+  ]
+}
