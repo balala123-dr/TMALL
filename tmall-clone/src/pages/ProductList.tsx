@@ -1,6 +1,7 @@
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { useAuth } from '../contexts/AuthContext'
+import { buildApiUrl } from '../lib/apiConfig'
 
 interface ProductImage {
   product_image_src: string
@@ -32,17 +33,15 @@ export default function ProductList() {
   const [products, setProducts] = useState<Product[]>([])
   const [category, setCategory] = useState<Category | null>(null)
   const [loading, setLoading] = useState(true)
-  const [categories, setCategories] = useState<Category[]>([])
 
   // 获取分类数据
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch('http://localhost:3001/api/categories')
+        const response = await fetch(buildApiUrl('/categories'))
         const result = await response.json()
         
         if (result.success) {
-          setCategories(result.data)
           // 设置当前分类
           const currentCategory = result.data.find((c: Category) => c.category_id.toString() === categoryId)
           setCategory(currentCategory || null)
@@ -54,10 +53,8 @@ export default function ProductList() {
 
     const fetchProducts = async () => {
       try {
-        const response = await fetch(`http://localhost:3001/api/products?categoryId=${categoryId}`)
+        const response = await fetch(`${buildApiUrl('/products')}?categoryId=${categoryId}`)
         const result = await response.json()
-        
-        console.log('🔍 商品API响应:', result)
         
         if (result.success) {
           setProducts(result.data)
@@ -80,6 +77,23 @@ export default function ProductList() {
     navigate('/')
   }
 
+  // 图片加载失败时的处理函数
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    const target = e.currentTarget
+    target.style.display = 'none'
+    const placeholder = document.createElement('div')
+    placeholder.style.width = '100%'
+    placeholder.style.height = '100%'
+    placeholder.style.display = 'flex'
+    placeholder.style.alignItems = 'center'
+    placeholder.style.justifyContent = 'center'
+    placeholder.style.color = '#666'
+    placeholder.style.fontSize = '14px'
+    placeholder.style.background = '#f8f8f8'
+    placeholder.textContent = '商品图片'
+    target.parentNode?.appendChild(placeholder)
+  }
+
   return (
     <div className="tmall-page">
       {/* 最顶部细条 */}
@@ -95,7 +109,6 @@ export default function ProductList() {
         color: '#333'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <span>0.0</span>
           <span>欢迎来天猫</span>
           {user ? (
             <>
@@ -330,21 +343,7 @@ export default function ProductList() {
                         height: '100%',
                         objectFit: 'cover'
                       }}
-                      onError={(e) => {
-                        // 如果图片加载失败，显示默认占位图
-                        e.currentTarget.style.display = 'none'
-                        const placeholder = document.createElement('div')
-                        placeholder.style.width = '100%'
-                        placeholder.style.height = '100%'
-                        placeholder.style.display = 'flex'
-                        placeholder.style.alignItems = 'center'
-                        placeholder.style.justifyContent = 'center'
-                        placeholder.style.color = '#666'
-                        placeholder.style.fontSize = '14px'
-                        placeholder.style.background = '#f8f8f8'
-                        placeholder.textContent = '商品图片'
-                        e.currentTarget.parentNode?.appendChild(placeholder)
-                      }}
+                      onError={handleImageError}
                     />
                   ) : (
                     <img 
@@ -355,21 +354,7 @@ export default function ProductList() {
                         height: '100%',
                         objectFit: 'cover'
                       }}
-                      onError={(e) => {
-                        // 如果图片加载失败，显示文字占位符
-                        e.currentTarget.style.display = 'none'
-                        const placeholder = document.createElement('div')
-                        placeholder.style.width = '100%'
-                        placeholder.style.height = '100%'
-                        placeholder.style.display = 'flex'
-                        placeholder.style.alignItems = 'center'
-                        placeholder.style.justifyContent = 'center'
-                        placeholder.style.color = '#666'
-                        placeholder.style.fontSize = '14px'
-                        placeholder.style.background = '#f8f8f8'
-                        placeholder.textContent = '商品图片'
-                        e.currentTarget.parentNode?.appendChild(placeholder)
-                      }}
+                      onError={handleImageError}
                     />
                   )}
                 </div>
@@ -443,7 +428,7 @@ export default function ProductList() {
                             const token = localStorage.getItem('token')
                             
                             // 调用API添加到购物车
-                            const response = await fetch('http://localhost:3001/api/cart', {
+                            const response = await fetch(buildApiUrl('/cart'), {
                               method: 'POST',
                               headers: {
                                 'Content-Type': 'application/json',
@@ -535,8 +520,6 @@ export default function ProductList() {
           </div>
         )}
       </main>
-
-
     </div>
   )
 }

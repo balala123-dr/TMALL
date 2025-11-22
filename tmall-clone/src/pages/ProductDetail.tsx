@@ -1,6 +1,7 @@
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { useAuth } from '../contexts/AuthContext'
+import { buildApiUrl } from '../lib/apiConfig'
 
 interface ProductImage {
   product_image_src: string
@@ -34,7 +35,7 @@ export default function ProductDetail() {
       try {
         // 这里需要创建获取单个商品的API
         // 暂时使用获取所有商品然后筛选的方式
-        const response = await fetch(`http://localhost:3001/api/products`)
+        const response = await fetch(buildApiUrl('/products'))
         const result = await response.json()
         
         if (result.success) {
@@ -90,7 +91,7 @@ export default function ProductDetail() {
         mobile: '13800138000' // 默认手机号，实际应用中应该从用户信息获取
       }
 
-      const response = await fetch('http://localhost:3001/api/orders', {
+      const response = await fetch(buildApiUrl('/orders'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -651,7 +652,7 @@ export default function ProductDetail() {
                     const token = localStorage.getItem('token')
                     
                     // 调用API添加到购物车
-                    const response = await fetch('http://localhost:3001/api/cart', {
+                    const response = await fetch(buildApiUrl('/cart'), {
                       method: 'POST',
                       headers: {
                         'Content-Type': 'application/json',
@@ -707,14 +708,7 @@ export default function ProductDetail() {
                   justifyContent: 'center',
                   whiteSpace: 'nowrap',
                   boxSizing: 'border-box',
-                  height: '50px',
-                  ':hover': {
-                    background: '#fff5f5',
-                    boxShadow: '0 2px 8px rgba(255,0,54,0.2)'
-                  },
-                  ':active': {
-                    transform: 'scale(0.98)'
-                  }
+                height: '50px'
                 }}
               >
                 加入购物车
@@ -741,14 +735,7 @@ export default function ProductDetail() {
                   justifyContent: 'center',
                   whiteSpace: 'nowrap',
                   boxSizing: 'border-box',
-                  height: '50px',
-                  ':hover': {
-                    background: '#e60033',
-                    boxShadow: '0 2px 8px rgba(255,0,54,0.3)'
-                  },
-                  ':active': {
-                    transform: 'scale(0.98)'
-                  }
+                height: '50px'
                 }}
               >
                 立即购买

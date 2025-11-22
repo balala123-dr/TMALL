@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 interface AddressOption {
   code: string
@@ -265,7 +265,7 @@ const AddressSelectorStatic: React.FC<AddressSelectorStaticProps> = ({
   const [selectedDistrict, setSelectedDistrict] = useState<string>('')
 
   // 解析已选择的值
-  useState(() => {
+  useEffect(() => {
     if (value) {
       const parts = value.split('-')
       if (parts.length >= 3) {
@@ -274,7 +274,7 @@ const AddressSelectorStatic: React.FC<AddressSelectorStaticProps> = ({
         setSelectedDistrict(parts[2])
       }
     }
-  })
+  }, [value])
 
   const handleProvinceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const provinceCode = e.target.value
@@ -320,7 +320,7 @@ const AddressSelectorStatic: React.FC<AddressSelectorStaticProps> = ({
           onChange={handleProvinceChange}
           className="form-select"
         >
-          <option value="">请选择省份</option>
+          <option value="">{placeholder}</option>
           {addressData.map((province) => (
             <option key={province.code} value={province.code}>
               {province.name}
@@ -337,7 +337,7 @@ const AddressSelectorStatic: React.FC<AddressSelectorStaticProps> = ({
             onChange={handleCityChange}
             className="form-select"
           >
-            <option value="">请选择城市</option>
+            <option value="">{placeholder}</option>
             {selectedProvinceData?.children?.map((city) => (
               <option key={city.code} value={city.code}>
                 {city.name}
@@ -355,7 +355,7 @@ const AddressSelectorStatic: React.FC<AddressSelectorStaticProps> = ({
             onChange={handleDistrictChange}
             className="form-select"
           >
-            <option value="">请选择区县</option>
+            <option value="">{placeholder}</option>
             {selectedCityData?.children?.map((district) => (
               <option key={district.code} value={district.code}>
                 {district.name}

@@ -1,12 +1,36 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { buildApiUrl } from '../lib/apiConfig';
 import '../styles/OrderDetail.css';
 
+interface OrderItem {
+  product_order_item_id: number;
+  product_name: string;
+  product_order_item_price: number;
+  product_order_item_number: number;
+  product_image_src?: string;
+  product_order_item_user_message?: string;
+}
+
+interface Order {
+  product_order_id: number;
+  product_order_code: string;
+  product_order_status: number;
+  product_order_receiver: string;
+  product_order_mobile: string;
+  product_order_detail_address: string;
+  product_order_pay_date?: string;
+  product_order_delivery_date?: string;
+  product_order_confirm_date?: string;
+  total_amount: number;
+  items: OrderItem[];
+}
+
 const OrderDetail = () => {
-  const { orderId } = useParams();
-  const [order, setOrder] = useState(null);
+  const { orderId } = useParams<{ orderId: string }>();
+  const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   // 获取用户Token
@@ -26,7 +50,7 @@ const OrderDetail = () => {
         return;
       }
 
-      const response = await fetch(`http://localhost:3001/api/orders/${orderId}`, {
+      const response = await fetch(buildApiUrl(`/orders/${orderId}`), {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -50,7 +74,7 @@ const OrderDetail = () => {
   };
 
   // 格式化订单状态
-  const formatStatus = (status) => {
+  const formatStatus = (status: number) => {
     switch (status) {
       case -1: return '已取消';
       case 0: return '待付款';
@@ -62,7 +86,7 @@ const OrderDetail = () => {
   };
 
   // 格式化日期时间
-  const formatDateTime = (dateString) => {
+  const formatDateTime = (dateString: string) => {
     if (!dateString) return '';
     const date = new Date(dateString);
     return date.toLocaleString('zh-CN', {
@@ -75,11 +99,11 @@ const OrderDetail = () => {
   };
 
   // 更新订单状态
-  const updateOrderStatus = async (newStatus) => {
+  const updateOrderStatus = async (newStatus: number) => {
     try {
       const token = getToken();
       
-      const response = await fetch(`http://localhost:3001/api/orders/${orderId}/status`, {
+      const response = await fetch(buildApiUrl(`/orders/${orderId}/status`), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -91,10 +115,10 @@ const OrderDetail = () => {
       const data = await response.json();
       
       if (data.success) {
-        setOrder(prevOrder => ({
+        setOrder(prevOrder => prevOrder ? ({
           ...prevOrder,
           product_order_status: newStatus
-        }));
+        }) : prevOrder);
         
         if (newStatus === 3) {
           alert('确认收货成功');
@@ -113,6 +137,8 @@ const OrderDetail = () => {
 
   // 处理订单操作
   const handleOrderAction = () => {
+    if (!order) return;
+
     if (order.product_order_status === 0) {
       if (window.confirm('确定要取消这个订单吗？')) {
         updateOrderStatus(-1); // -1 表示已取消
@@ -126,6 +152,8 @@ const OrderDetail = () => {
 
   // 模拟支付
   const handlePayment = () => {
+    if (!order) return;
+
     if (window.confirm('确定要支付 ¥' + order.total_amount.toFixed(2) + ' 吗？')) {
       updateOrderStatus(1);
     }
@@ -165,7 +193,7 @@ const OrderDetail = () => {
     );
   }
 
-  const getStatusColor = (status) => {
+  const getStatusColor = (status: number) => {
     switch (status) {
       case -1: return '#999';
       case 0: return '#ff6000';
@@ -176,7 +204,7 @@ const OrderDetail = () => {
     }
   };
 
-  const getStatusBgColor = (status) => {
+  const getStatusBgColor = (status: number) => {
     switch (status) {
       case -1: return '#f5f5f5';
       case 0: return '#fff2e8';

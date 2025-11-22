@@ -1,15 +1,32 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { useState, useEffect } from 'react'
+import { buildApiUrl } from '../lib/apiConfig'
 import '../App.css'
+
+interface Category {
+  category_id: number
+  category_name: string
+  icon?: string
+}
+
+interface Product {
+  product_id: number
+  category_id?: number
+  product_name?: string
+  product_price?: number
+  product_sale_price?: number
+  product_image_src?: string
+  [key: string]: unknown
+}
 
 export default function Home() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
   const [currentSlide, setCurrentSlide] = useState(0)
-  const [categories, setCategories] = useState([])
-  const [products, setProducts] = useState([])
-  const [selectedCategory, setSelectedCategory] = useState(null)
+  const [categories, setCategories] = useState<Category[]>([])
+  const [products, setProducts] = useState<Product[]>([])
+  const [selectedCategory, setSelectedCategory] = useState<number | null>(null)
   const [loading, setLoading] = useState(true)
 
   // 页面加载时获取数据
@@ -33,7 +50,7 @@ export default function Home() {
     const fetchCategories = async () => {
       try {
         console.log('📋 获取商品分类...')
-        const response = await fetch('http://localhost:3001/api/categories')
+      const response = await fetch(buildApiUrl('/categories'))
         const result = await response.json()
         
         if (result.success) {
@@ -51,8 +68,8 @@ export default function Home() {
       try {
         console.log('📦 获取商品列表...')
         const url = selectedCategory 
-          ? `http://localhost:3001/api/products?categoryId=${selectedCategory}`
-          : 'http://localhost:3001/api/products'
+          ? `${buildApiUrl('/products')}?categoryId=${selectedCategory}`
+          : buildApiUrl('/products')
         
         const response = await fetch(url)
         const result = await response.json()
@@ -160,7 +177,7 @@ export default function Home() {
     
     // 根据轮播图中的商品名称，在商品列表中查找匹配的商品
     // 支持部分匹配，比如"魅蓝note6"可以匹配包含"魅蓝"或"note6"的商品
-    const matchedProduct = products.find((product: any) => {
+    const matchedProduct = products.find((product) => {
       const productName = product.product_name || ''
       const slideTitle = currentSlideData.title || ''
       
@@ -188,7 +205,7 @@ export default function Home() {
       // 根据商品类型映射到分类
       if (currentSlideData.type === 'phone') {
         // 手机类商品，查找"手机/数码/电脑办公"分类
-        const phoneCategory = categories.find((cat: any) => 
+        const phoneCategory = categories.find((cat) => 
           cat.category_name && cat.category_name.includes('手机')
         )
         if (phoneCategory) {
@@ -196,7 +213,7 @@ export default function Home() {
         }
       } else if (currentSlideData.type === 'device') {
         // 设备类商品，查找"大家电/生活电器"分类
-        const deviceCategory = categories.find((cat: any) => 
+        const deviceCategory = categories.find((cat) => 
           cat.category_name && (cat.category_name.includes('电器') || cat.category_name.includes('家电'))
         )
         if (deviceCategory) {
@@ -204,7 +221,7 @@ export default function Home() {
         }
       } else if (currentSlideData.type === 'audio') {
         // 音频类商品，查找"手机/数码/电脑办公"分类
-        const audioCategory = categories.find((cat: any) => 
+        const audioCategory = categories.find((cat) => 
           cat.category_name && cat.category_name.includes('数码')
         )
         if (audioCategory) {
@@ -488,6 +505,7 @@ export default function Home() {
                   href="#"
                   onClick={(e) => {
                     e.preventDefault()
+                    setSelectedCategory(category.category_id || null)
                     navigate(`/category/${category.category_id}`)
                   }}
                   style={{
@@ -541,7 +559,7 @@ export default function Home() {
                          currentSlide === 2 ? 'linear-gradient(135deg, #2196f3 0%, #1976d2 100%)' :
                          currentSlide === 3 ? 'linear-gradient(135deg, #9c27b0 0%, #7b1fa2 100%)' :
                          'linear-gradient(135deg, #ff9800 0%, #f57c00 100%)',
-          backgroundBlend: 'multiply'
+          backgroundBlendMode: 'multiply'
         }}>
           {/* 产品广告 */}
           <div style={{

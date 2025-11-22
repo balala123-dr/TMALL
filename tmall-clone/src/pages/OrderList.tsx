@@ -1,12 +1,35 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { buildApiUrl } from '../lib/apiConfig';
 import '../styles/OrderList.css';
 
+interface OrderItem {
+  product_order_item_id: number;
+  product_name: string;
+  product_order_item_price: number;
+  product_order_item_number: number;
+  product_image_src?: string;
+  product_order_item_user_message?: string;
+}
+
+interface Order {
+  product_order_id: number;
+  product_order_code: string;
+  product_order_status: number;
+  product_order_receiver: string;
+  product_order_mobile: string;
+  product_order_detail_address: string;
+  total_amount: number;
+  items: OrderItem[];
+}
+
+type OrderTab = 'all' | 'pending' | 'paid' | 'delivered' | 'completed';
+
 const OrderList = () => {
-  const [orders, setOrders] = useState([]);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [activeTab, setActiveTab] = useState('all'); // all, pending, paid, delivered, completed
+  const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<OrderTab>('all');
   const navigate = useNavigate();
 
   // 获取用户Token
@@ -29,7 +52,7 @@ const OrderList = () => {
       // 从token中提取用户ID
       const userId = token.split('-')[2];
       
-      const response = await fetch(`http://localhost:3001/api/orders?userId=${userId}`, {
+      const response = await fetch(`${buildApiUrl('/orders')}?userId=${userId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -56,7 +79,8 @@ const OrderList = () => {
   const getFilteredOrders = () => {
     if (activeTab === 'all') return orders;
     
-    const statusMap = {
+    const statusMap: Record<OrderTab, number> = {
+      all: -999, // unused placeholder
       'pending': 0,
       'paid': 1,
       'delivered': 2,
@@ -67,8 +91,8 @@ const OrderList = () => {
   };
 
   // 格式化订单状态
-  const formatStatus = (status) => {
-    const statusMap = {
+  const formatStatus = (status: number) => {
+    const statusMap: Record<number, string> = {
       0: '待付款',
       1: '待发货',
       2: '待收货',
@@ -78,7 +102,7 @@ const OrderList = () => {
   };
 
   // 格式化日期
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: string) => {
     if (!dateString) return '';
     const date = new Date(dateString);
     return date.toLocaleDateString('zh-CN', {
@@ -89,7 +113,7 @@ const OrderList = () => {
   };
 
   // 从订单编号提取日期（格式：YYYYMMDDXXXX）
-  const extractDateFromOrderCode = (orderCode) => {
+  const extractDateFromOrderCode = (orderCode: string) => {
     if (!orderCode || orderCode.length < 8) return '';
     const year = orderCode.substring(0, 4);
     const month = orderCode.substring(4, 6);
@@ -98,11 +122,11 @@ const OrderList = () => {
   };
 
   // 更新订单状态
-  const updateOrderStatus = async (orderId, newStatus) => {
+  const updateOrderStatus = async (orderId: number, newStatus: number) => {
     try {
       const token = getToken();
       
-      const response = await fetch(`http://localhost:3001/api/orders/${orderId}/status`, {
+      const response = await fetch(buildApiUrl(`/orders/${orderId}/status`), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -132,7 +156,7 @@ const OrderList = () => {
   };
 
   // 处理订单操作
-  const handleOrderAction = (orderId, currentStatus) => {
+  const handleOrderAction = (orderId: number, currentStatus: number) => {
     if (currentStatus === 0) {
       // 取消订单
       if (window.confirm('确定要取消这个订单吗？')) {
@@ -150,7 +174,7 @@ const OrderList = () => {
   };
 
   // 查看订单详情
-  const viewOrderDetail = (orderId) => {
+  const viewOrderDetail = (orderId: number) => {
     navigate(`/order/${orderId}`);
   };
 

@@ -1,8 +1,10 @@
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+import { buildApiUrl } from '../lib/apiConfig'
 
 interface CartItem {
+  cart_id: number
   id: number
   product_id: number
   product_name: string
@@ -21,40 +23,39 @@ export default function Cart() {
   const [cartItems, setCartItems] = useState<CartItem[]>([])
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    // 从API获取购物车数据
-    const fetchCartItems = async () => {
-      try {
-        if (!user) {
-          setLoading(false)
-          return
-        }
-        
-        const token = localStorage.getItem('token')
-        const response = await fetch('http://localhost:3001/api/cart', {
-          headers: {
-            'Authorization': token ? `Bearer ${token}` : ''
-          }
-        })
-        
-        const result = await response.json()
-        
-        if (result.success) {
-          setCartItems(result.data)
-        } else {
-          console.error('获取购物车失败:', result.message)
-          setCartItems([])
-        }
+  const fetchCartItems = useCallback(async () => {
+    try {
+      if (!user) {
         setLoading(false)
-      } catch (error) {
-        console.error('获取购物车失败:', error)
-        setCartItems([])
-        setLoading(false)
+        return
       }
-    }
 
-    fetchCartItems()
+      const token = localStorage.getItem('token')
+      const response = await fetch(buildApiUrl('/cart'), {
+        headers: {
+          'Authorization': token ? `Bearer ${token}` : ''
+        }
+      })
+
+      const result = await response.json()
+
+      if (result.success) {
+        setCartItems(result.data)
+      } else {
+        console.error('获取购物车失败:', result.message)
+        setCartItems([])
+      }
+      setLoading(false)
+    } catch (error) {
+      console.error('获取购物车失败:', error)
+      setCartItems([])
+      setLoading(false)
+    }
   }, [user])
+
+  useEffect(() => {
+    fetchCartItems()
+  }, [fetchCartItems])
 
   const updateQuantity = async (id: number, newQuantity: number) => {
     if (newQuantity <= 0) return
@@ -68,7 +69,7 @@ export default function Cart() {
       if (!cartItem) return
       
       // 调用API更新数量
-      const response = await fetch(`http://localhost:3001/api/cart/${cartItem.cart_id}`, {
+      const response = await fetch(buildApiUrl(`/cart/${cartItem.cart_id}`), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -106,7 +107,7 @@ export default function Cart() {
       if (!cartItem) return
       
       // 调用API删除商品
-      const response = await fetch(`http://localhost:3001/api/cart/${cartItem.cart_id}`, {
+      const response = await fetch(buildApiUrl(`/cart/${cartItem.cart_id}`), {
         method: 'DELETE',
         headers: {
           'Authorization': token ? `Bearer ${token}` : ''
@@ -142,6 +143,11 @@ export default function Cart() {
       return
     }
 
+    if (!user) {
+      alert('请先登录后再结算')
+      return
+    }
+
     try {
       const token = localStorage.getItem('token')
       const orderData = {
@@ -157,7 +163,7 @@ export default function Cart() {
         mobile: '13800138000' // 默认手机号，实际应用中应该从用户信息获取
       }
 
-      const response = await fetch('http://localhost:3001/api/orders', {
+      const response = await fetch(buildApiUrl('/orders'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

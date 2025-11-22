@@ -1,5 +1,6 @@
 import { createContext, useContext, useState } from 'react'
 import type { ReactNode } from 'react'
+import { buildApiUrl } from '../lib/apiConfig'
 
 interface User {
   user_id?: number
@@ -8,13 +9,22 @@ interface User {
   user_password?: string
   user_realname?: string
   user_gender?: number
+  user_birthday?: string
+  user_address?: string
+  user_avatar?: string
+}
+
+type AuthResponse = {
+  success: boolean
+  data?: User
+  error?: string
 }
 
 interface AuthContextType {
   user: User | null
-  login: (user: User) => void
+  login: (user: User) => Promise<AuthResponse>
   logout: () => void
-  register: (user: User) => Promise<void>
+  register: (user: User) => Promise<AuthResponse>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -34,10 +44,10 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null)
 
-  const login = async (userData: User) => {
+  const login = async (userData: User): Promise<AuthResponse> => {
     try {
       // 真正连接后端API
-      const response = await fetch('http://localhost:3001/api/login', {
+      const response = await fetch(buildApiUrl('/login'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -72,10 +82,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.removeItem('user')
   }
 
-  const register = async (userData: User) => {
+  const register = async (userData: User): Promise<AuthResponse> => {
     try {
       // 真正连接后端API保存到数据库
-      const response = await fetch('http://localhost:3001/api/register', {
+      const response = await fetch(buildApiUrl('/register'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
